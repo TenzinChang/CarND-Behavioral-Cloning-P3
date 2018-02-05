@@ -60,8 +60,9 @@ I tried various tuning like adding more layers, use different size filters, add 
 
 #### 4. Appropriate training data
 To augment data, i use:
-- flip the image
-- add left/right image to training, and tried various correction factor (0.2 is better than none or other values).
+- normalize (per video instructions)
+- flip the images
+- add left/right images to training, and tried various correction factor (0.2 is better than none or other values).
 
 ### Model Architecture and Training Strategy
 
