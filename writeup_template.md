@@ -118,4 +118,5 @@ Trainable params: 411,125
 
 #### 3. Creation of the Training Set & Training Process
 
-I created the run1.mp4 per instruction.
+I created the run1.mp4 per instruction. Due to size limit of Github 32MB can't upload here, the link is below:
+https://drive.google.com/open?id=1-aeKxF5ZR5cEfylHPUDqzGLKktr1PfGy
