@@ -38,9 +38,21 @@ python drive.py model.h5
 The model.py file contains the code for training and saving the convolution neural network. The file shows the pipeline I used for training and validating the model, and it contains comments to explain how the code works.
 
 ### Model Architecture and Training Strategy
-I basically copy the nvidia architecture in the lecture video, and only add Dropout.
+
+Overall I tried to:
+- First setup a simple model, using nvidia as template.
+- Augment the data, tried different augmentation
+- Tune the model.
+
+For model architecture I tried various strategies but end up basically re-using the nvidia architecture in the lecture video, and only added Dropout because it worked best. Different model architectures I've tried:
+- Started with simply 1 dense layer, no convolutions. This doesn't work well but at least prove the car can drive.
+- Stack several Cond2D layers, and try to add Dropout between them, however, I noticed Dropout between the Conv2D layers doesn't help the performance, so I removed them and only add Dropout in the fully connected layers, which did help.
+- Tried various kernel sizes: (3x3, 5x5) instead of (2,2), because augmented data chopped off the top/bottom of image, i also try asymetric kernal sizes (2x3, 2x4), etc.. But these settings don't seem to help and I end up using the simplest one used in the lecturer's video.
+- Tried various filter sizes: from 3->6->12->24->48->96, and different variations, but these tuning seem not able to perform better than the nvidia settings or only marginally, or simply caused validation errors to go up (overtrained).
+- in my working copy of model.py I had many lines commented out after various tries, but unfortunately I "clean" them up before submission. I'll remember to keep them next time :)
+
 For training:
-- I augment the data as the videos suggested: flip and image, also add left/right camera in addition to middle.
+- I augment the data first as the videos suggested: flip and image, also add left/right camera in addition to middle.
 - add ploting for training/validation errors in each epoch, this way i can determine if the network overfit.
 - I was using AWS/carnd instance, then the copy model.h5 back and forth between my laptop and AWS was too much, also my laptop was dying trying to run the model. So I decided to get a linux machine w/ GPU, it's almost impossible to get GPU now because of those crazy miners, anyhow, I managed to pay a premium $1100 for Nvidia 1080Ti, and took 2 weeks to setup Ubuntu 16.04 running carnd-term1 conda environment.yml w/ various updates of CUDA/cuDNN library because tensorflow has very specific version requirements(using CUDA 8.0, which depends on cnDNN 5.1). It was a lot of fun!
 
@@ -118,6 +130,13 @@ Trainable params: 411,125
 
 
 #### 3. Creation of the Training Set & Training Process
+
+During the training process, I first tried to drive myself to create training data, but i was a terrible driver and had problem keeping the car in the lane, so I decided to use the data provided by the class.
+
+Before I augment the data, I simply use the normalized images to train the model, which is simply stacked Conv2D layers and not much tuning, and it still drives very poorly, so I began to augment the data:
+- flipping the images (left <-> right), which is big win.
+- add left/right lane, and tried various correction factor (0.0, 0.1, 0.2, 0.4...), and finally settled w/ 0.2
+- only after fully augmented the data, then I began to tune the model and tried different Dropout, filter, kernel size, etc.. (see above). There are probably 20+ iterations in total.
 
 I created the run1.mp4 per instruction. Due to size limit of Github 32MB can't upload here, the link is below:
 https://drive.google.com/open?id=1-aeKxF5ZR5cEfylHPUDqzGLKktr1PfGy
